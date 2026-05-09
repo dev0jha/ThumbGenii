@@ -1,8 +1,39 @@
+# FastAPI
 fastapi==0.115.12
-uvicorn==0.34.2
-sqlmodel==0.0.24
-python-dotenv==1.1.0
-openai==1.78.1
-imagekitio==5.0.0
-httpx==0.28.1
+uvicorn[standard]==0.34.2
 python-multipart==0.0.20
+
+# Database
+sqlmodel==0.0.24
+alembic==1.15.2
+psycopg2-binary==2.9.10
+
+# Security
+python-jose[cryptography]==3.4.0
+passlib[bcrypt]==1.7.4
+
+# Pydantic
+pydantic==2.11.4
+pydantic-settings==2.9.1
+email-validator==2.2.0
+
+# AI/HTTP
+httpx==0.28.1
+openai==1.78.1
+
+# ImageKit
+imagekitio>=4.0,<5.0
+
+# Environment
+python-dotenv==1.1.0
+
+# Utilities
+python-slugify==8.0.4
+
+# Development (optional)
+pytest==8.3.5
+pytest-asyncio==0.26.0
+black==25.1.0
+isort==6.0.1
+flake8==7.2.0
+mypy==1.15.0

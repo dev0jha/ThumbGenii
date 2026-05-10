@@ -4,14 +4,11 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  width: 100%;
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.08),
     0 1.5px 6px rgba(0, 0, 0, 0.04);
   backdrop-filter: blur(8px);
-  margin: 0 auto;
-  left: 0;
-  right: 0;
-  width: 100%;
 }
 
 .header-inner {
@@ -19,6 +16,9 @@
   align-items: center;
   height: 60px;
   gap: var(--space-xl);
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
 }
 
 .header-logo {
@@ -51,7 +51,8 @@
 
 .header-nav {
   display: flex;
-  gap: var(--space-lg);
+  align-items: center;
+  gap: var(--space-xl);
   flex: 1;
 }
 

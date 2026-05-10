@@ -10,7 +10,7 @@ psycopg2-binary==2.9.10
 
 # Security
 python-jose[cryptography]==3.4.0
-passlib[bcrypt]==1.7.4
+bcrypt==4.2.1
 
 # Pydantic
 pydantic==2.11.4

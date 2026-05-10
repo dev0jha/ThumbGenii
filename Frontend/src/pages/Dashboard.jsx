@@ -50,7 +50,7 @@ export default function Dashboard() {
         <div className="dashboard-empty">Loading...</div>
       ) : projects.length === 0 ? (
         <div className="dashboard-empty">
-          <div className="dashboard-empty-icon">T</div>
+          <div className="dashboard-empty-icon">G</div>
           <h3>No projects yet</h3>
           <p>Create your first AI thumbnail project to get started.</p>
           <Button onClick={() => navigate('/project/new')}>Create Project</Button>

@@ -32,7 +32,7 @@ export default function Login() {
       <Card className="auth-card">
         <div className="auth-header">
           <h2>Welcome back</h2>
-          <p>Sign in to your ThumbAI account</p>
+          <p>Sign in to your ThumbGenii account</p>
         </div>
 
         {error && <div className="auth-error">{error}</div>}

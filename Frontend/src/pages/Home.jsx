@@ -85,7 +85,7 @@ export default function Home() {
 
       <footer className="home-footer">
         <div className="container">
-          <p>ThumbAI — AI thumbnail generation for modern creators</p>
+          <p>ThumbGenii — AI thumbnail generation for modern creators</p>
         </div>
       </footer>
     </div>

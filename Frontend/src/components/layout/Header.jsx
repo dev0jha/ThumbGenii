@@ -16,8 +16,8 @@ export default function Header() {
     <header className="header">
       <div className="header-inner container">
         <Link to="/" className="header-logo">
-          <span className="header-logo-mark">T</span>
-          <span className="header-logo-text">humbAI</span>
+          <span className="header-logo-mark">G</span>
+          <span className="header-logo-text">ThumbGenii</span>
         </Link>
 
         <nav className="header-nav">

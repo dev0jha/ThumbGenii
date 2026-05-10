@@ -1,7 +1,7 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
-import Button from '../ui/Button';
-import './Header.css';
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import Button from "../ui/Button";
+import "./Header.css";
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -9,7 +9,7 @@ export default function Header() {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -23,11 +23,17 @@ export default function Header() {
         <nav className="header-nav">
           {user ? (
             <>
-              <Link to="/dashboard" className="header-link">Projects</Link>
-              <Link to="/project/new" className="header-link">New Project</Link>
+              <Link to="/dashboard" className="header-link">
+                Projects
+              </Link>
+              <Link to="/project/new" className="header-link">
+                New Project
+              </Link>
             </>
           ) : (
-            <Link to="/" className="header-link">Home</Link>
+            <Link to="/" className="header-link">
+              Home
+            </Link>
           )}
         </nav>
 
@@ -41,12 +47,22 @@ export default function Header() {
               <Link to="/profile" className="header-avatar">
                 {user.name?.[0] || user.email[0]}
               </Link>
-              <Button variant="ghost" size="sm" onClick={handleLogout}>Logout</Button>
+              <Button variant="ghost" size="sm" onClick={handleLogout}>
+                Logout
+              </Button>
             </div>
           ) : (
             <div className="header-auth">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/login')}>Log in</Button>
-              <Button size="sm" onClick={() => navigate('/register')}>Sign up</Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate("/login")}
+              >
+                Log in
+              </Button>
+              <Button size="sm" onClick={() => navigate("/register")}>
+                Sign up
+              </Button>
             </div>
           )}
         </div>

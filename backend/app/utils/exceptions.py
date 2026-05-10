@@ -4,6 +4,7 @@ Custom Exceptions
 Application-specific exception classes.
 """
 
+from typing import Optional
 from fastapi import HTTPException, status
 
 

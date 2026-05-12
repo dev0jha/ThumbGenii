@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-const COMPANIES = ["Vercel", "Stripe", "GitHub", "Linear", "Figma", "Supabase"];
+
 
 export default function Home() {
   const [prompt, setPrompt] = useState("");

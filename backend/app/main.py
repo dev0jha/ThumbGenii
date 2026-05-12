@@ -1,137 +1,87 @@
-"""
-ThumbAI FastAPI Application
-
-Main entry point for the FastAPI application.
-"""
-
+import asyncio
 import logging
-import time
-from collections import defaultdict
-from fastapi import FastAPI, Request
+import os
+from urllib.parse import quote
+
+import httpx
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import JSONResponse
-from contextlib import asynccontextmanager
+from fastapi.responses import Response
+from pydantic import BaseModel, Field
 
-from app.core.config import settings
-from app.core.logger import setup_logging
-from app.db.session import init_db
-from app.api.v1.auth import router as auth_router
-from app.api.v1.users import router as users_router
-from app.api.v1.projects import router as projects_router
-from app.api.v1.generations import router as generations_router
-from app.api.v1.uploads import router as uploads_router
-from app.api.v1.health import router as health_router
+load_dotenv()
 
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("thumbai")
 
-# In-memory rate limiter
-_rate_limit_store: dict = defaultdict(list)
+app = FastAPI(title="ThumbAI", version="1.0.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+HF_API_KEY = os.getenv("HF_API_KEY")
+HF_API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
+POLLINATIONS_URL = "https://image.pollinations.ai/prompt"
 
 
-def _is_rate_limited(client_id: str, max_requests: int, window_seconds: int = 60) -> bool:
-    now = time.time()
-    window_start = now - window_seconds
-    timestamps = _rate_limit_store[client_id]
-    # Prune old entries
-    _rate_limit_store[client_id] = [t for t in timestamps if t > window_start]
-    if len(_rate_limit_store[client_id]) >= max_requests:
-        return True
-    _rate_limit_store[client_id].append(now)
-    return False
+class GenerateRequest(BaseModel):
+    prompt: str = Field(..., min_length=1, max_length=1000)
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Application lifespan events."""
-    # Startup
-    setup_logging()
-    logger.info("Starting %s v%s", settings.APP_NAME, settings.APP_VERSION)
-    init_db()
-    logger.info("Database initialized")
-    yield
-    # Shutdown
-    _rate_limit_store.clear()
-    logger.info("Shutting down...")
+@app.post("/api/generate")
+async def generate(req: GenerateRequest):
+    prompt = req.prompt.strip()
+    if not prompt:
+        raise HTTPException(400, "Prompt is required")
 
+    if HF_API_KEY:
+        try:
+            headers = {"Authorization": f"Bearer {HF_API_KEY}"}
+            payload = {"inputs": prompt}
+            async with httpx.AsyncClient() as client:
+                for attempt in range(3):
+                    resp = await client.post(
+                        HF_API_URL, headers=headers, json=payload, timeout=120.0
+                    )
+                    if resp.status_code == 200:
+                        content_type = resp.headers.get("content-type", "image/png")
+                        return Response(
+                            content=resp.content, media_type=content_type
+                        )
+                    try:
+                        err = resp.json()
+                        if "loading" in err.get("error", ""):
+                            logger.info(
+                                "Model loading, retrying in 5s (attempt %d/3)",
+                                attempt + 1,
+                            )
+                            await asyncio.sleep(5)
+                            continue
+                    except Exception:
+                        pass
+                    resp.raise_for_status()
+        except Exception as e:
+            logger.warning("Hugging Face failed: %s", e)
 
-def create_application() -> FastAPI:
-    """Create and configure FastAPI application."""
-    
-    app = FastAPI(
-        title=settings.APP_NAME,
-        description="AI-powered thumbnail generation API",
-        version=settings.APP_VERSION,
-        docs_url="/docs" if settings.DEBUG else None,
-        redoc_url="/redoc" if settings.DEBUG else None,
-        openapi_url="/openapi.json" if settings.DEBUG else None,
-        lifespan=lifespan
-    )
-    
-    # Rate limiting middleware
-    @app.middleware("http")
-    async def rate_limit_middleware(request: Request, call_next):
-        client_ip = request.client.host if request.client else "unknown"
-        if _is_rate_limited(client_ip, settings.RATE_LIMIT_PER_MINUTE):
-            return JSONResponse(
-                status_code=429,
-                content={"error": "RATE_LIMIT", "message": "Too many requests"}
-            )
-        return await call_next(request)
-
-    # CORS middleware
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=settings.CORS_ORIGINS,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-    
-    # Gzip compression
-    app.add_middleware(GZipMiddleware, minimum_size=1000)
-    
-    # Exception handler
-    @app.exception_handler(Exception)
-    async def global_exception_handler(request: Request, exc: Exception):
-        from app.utils.exceptions import handle_exception
-        http_exc = handle_exception(exc)
-        return JSONResponse(
-            status_code=http_exc.status_code,
-            content=http_exc.detail
-        )
-    
-    # Include routers
-    app.include_router(health_router, prefix="/api/v1")
-    app.include_router(auth_router, prefix="/api/v1")
-    app.include_router(users_router, prefix="/api/v1")
-    app.include_router(projects_router, prefix="/api/v1")
-    app.include_router(generations_router, prefix="/api/v1")
-    app.include_router(uploads_router, prefix="/api/v1")
-    
-    return app
-
-
-# Create application instance
-app = create_application()
+    logger.info("Falling back to Pollinations.ai")
+    url = f"{POLLINATIONS_URL}/{quote(prompt)}?width=1280&height=720&nologo=true"
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(url, timeout=120.0)
+        resp.raise_for_status()
+        return Response(content=resp.content, media_type="image/png")
 
 
 @app.get("/")
-def root():
-    """Root endpoint."""
-    return {
-        "name": settings.APP_NAME,
-        "version": settings.APP_VERSION,
-        "docs": "/docs",
-        "api": "/api/v1"
-    }
+async def root():
+    return {"name": "ThumbAI", "version": "1.0.0", "endpoints": {"/api/generate": "POST - generate image from prompt"}}
 
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(
-        "app.main:app",
-        host=settings.HOST,
-        port=settings.PORT,
-        reload=settings.DEBUG
-    )
+@app.get("/health")
+async def health():
+    return {"status": "ok"}

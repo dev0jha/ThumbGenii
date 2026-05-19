@@ -100,6 +100,7 @@ export default function Home() {
           </div>
         </div>
       </header>
+      
 
       {/* Main */}
       <main className="flex-1">

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-
+import RadialGradientButton from "@/components/pixel-perfect/radial-gradient-button";
 
 
 export default function Home() {
@@ -29,9 +29,7 @@ export default function Home() {
     } catch {}
   }, [theme]);
 
-  const toggleTheme = useCallback(() => {
-    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
-  }, []);
+
 
   const acceptCookies = useCallback(() => {
     setCookiesAccepted(true);
@@ -78,118 +76,27 @@ export default function Home() {
       style={{ backgroundColor: "var(--bg)" }}
     >
       {/* Navigation */}
-      <header style={{ borderBottom: "1px solid var(--border)" }}>
+      <header>
         <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-          <span
-            className="text-base font-medium"
-            style={{ color: "var(--text-primary)" }}
-          >
-            <span className="font-medium" style={{ color: "#3ecf8e" }}>
-              Thumb
+          <div className="flex items-center gap-2">
+            <img src="/thumbAi.png" alt="ThumbAI Logo" className="h-15 w-auto" />
+            <span
+              className="text-base font-medium hidden sm:inline"
+              style={{ color: "var(--text-primary)" }}
+            >
+              <span className="font-medium" style={{ color: "#3ecf8e" }}>
+                Thumb
+              </span>
+              AI
             </span>
-            AI
-          </span>
-          <nav className="hidden md:flex items-center gap-8">
-            <a
-              href="#"
-              className="text-sm transition"
-              style={{ color: "var(--text-secondary)" }}
-              onMouseEnter={(e) =>
-                (e.target.style.color = "var(--text-primary)")
-              }
-              onMouseLeave={(e) =>
-                (e.target.style.color = "var(--text-secondary)")
-              }
-            >
-              Features
+          </div>
+          
+          <div className="flex items-center">
+            <a href="https://github.com/dev0jha/ThumbGenii">
+            <RadialGradientButton className="h-8 px-4 py-1 text-xs min-w-20">
+              Github
+            </RadialGradientButton>
             </a>
-            <a
-              href="#"
-              className="text-sm transition"
-              style={{ color: "var(--text-secondary)" }}
-              onMouseEnter={(e) =>
-                (e.target.style.color = "var(--text-primary)")
-              }
-              onMouseLeave={(e) =>
-                (e.target.style.color = "var(--text-secondary)")
-              }
-            >
-              Docs
-            </a>
-            <a
-              href="#"
-              className="text-sm transition"
-              style={{ color: "var(--text-secondary)" }}
-              onMouseEnter={(e) =>
-                (e.target.style.color = "var(--text-primary)")
-              }
-              onMouseLeave={(e) =>
-                (e.target.style.color = "var(--text-secondary)")
-              }
-            >
-              GitHub
-            </a>
-          </nav>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={toggleTheme}
-              className="flex items-center justify-center w-8 h-8 transition"
-              style={{ color: "var(--text-secondary)", borderRadius: "6px" }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor =
-                  theme === "dark"
-                    ? "rgba(250,250,250,0.06)"
-                    : "rgba(0,0,0,0.06)";
-                e.target.style.color = "var(--text-primary)";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = "transparent";
-                e.target.style.color = "var(--text-secondary)";
-              }}
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? (
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="12" r="5" />
-                  <line x1="12" y1="1" x2="12" y2="3" />
-                  <line x1="12" y1="21" x2="12" y2="23" />
-                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                  <line x1="1" y1="12" x2="3" y2="12" />
-                  <line x1="21" y1="12" x2="23" y2="12" />
-                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                </svg>
-              ) : (
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                </svg>
-              )}
-            </button>
-            <button
-              className="btn-primary text-sm"
-              style={{ padding: "8px 18px", fontSize: "13px" }}
-            >
-              Get Started
-            </button>
           </div>
         </div>
       </header>

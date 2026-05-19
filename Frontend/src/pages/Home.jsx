@@ -84,10 +84,10 @@ export default function Home() {
               className="text-base font-medium hidden sm:inline"
               style={{ color: "var(--text-primary)" }}
             >
-              <span className="font-medium" style={{ color: "#3ecf8e" }}>
+              <span className="font-bold" style={{ color: "#3ecf8e" }}>
                 Thumb
               </span>
-              AI
+              Genii
             </span>
           </div>
           
@@ -124,101 +124,79 @@ export default function Home() {
               Describe your vision and let AI create the perfect image for your
               content. No design skills needed.
             </p>
-            <div className="flex items-center justify-center gap-3 mt-8">
-              <button className="btn-primary">Start Generating</button>
-              <button className="btn-secondary">Learn More</button>
-            </div>
           </div>
         </section>
 
         {/* Generator */}
         <section className="pb-24 px-6">
           <div className="max-w-xl mx-auto">
-            <div
-              className="p-6 md:p-8 rounded-xl"
-              style={{
-                backgroundColor: "var(--surface)",
-                border: "1px solid var(--border)",
-              }}
-            >
-              <label
-                htmlFor="prompt"
-                className="text-sm font-medium"
-                style={{ color: "var(--text-surface)" }}
-              >
-                Prompt
-              </label>
-              <textarea
-                id="prompt"
-                rows={3}
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="A cinematic shot of a cyberpunk city at night, neon lights reflecting on wet streets..."
-                className="block w-full mt-2 px-0 text-base leading-relaxed resize-none font-sans transition"
+            <div className="relative p-[1px] rounded-xl shadow-2xl overflow-hidden group">
+              {/* Diagonal Hashed Border layer */}
+              <div 
+                className="absolute inset-0 pointer-events-none opacity-40 transition-opacity duration-500 group-hover:opacity-80"
                 style={{
-                  color: "var(--text-surface)",
-                  backgroundColor: "transparent",
-                  border: "none",
-                  borderBottom: "1px solid",
-                  borderColor: error ? "rgba(239,68,68,0.4)" : "var(--border)",
-                  outline: "none",
-                  borderRadius: 0,
-                  fontWeight: 400,
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#3ecf8e";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = error
-                    ? "rgba(239,68,68,0.4)"
-                    : "var(--border)";
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    generate();
-                  }
+                  background: "repeating-linear-gradient(45deg, #4ade80, #4ade80 2px, transparent 2px, transparent 6px)"
                 }}
               />
-              <div className="flex items-center justify-between mt-5">
-                <span
-                  className="text-xs"
-                  style={{ color: "rgba(250,250,250,0.4)" }}
+              <div className="bg-[#1c1c1c] rounded-xl p-5 relative z-10 w-full h-full">
+                <label
+                  htmlFor="prompt"
+                  className="block text-sm font-bold text-gray-100 mb-3"
                 >
-                  Enter to generate &middot; Shift+Enter for new line
-                </span>
-                <button
-                  onClick={generate}
-                  disabled={loading || !prompt.trim()}
-                  className="btn-primary"
-                >
-                  {loading ? (
-                    <span className="flex items-center gap-2">
-                      <svg
-                        className="animate-spin h-3.5 w-3.5"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                        />
-                      </svg>
-                      Generating
-                    </span>
-                  ) : (
-                    "Generate"
-                  )}
-                </button>
+                  Prompt
+                </label>
+                <textarea
+                  id="prompt"
+                  rows={3}
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  placeholder="A cinematic shot of a cyberpunk city at night, neon lights reflecting on wet streets..."
+                  className="block w-full text-[15px] leading-relaxed resize-none font-sans bg-transparent text-gray-300 placeholder-gray-600 border-none outline-none focus:ring-0 p-0"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      generate();
+                    }
+                  }}
+                />
+                <div className="h-[1px] w-full bg-[#2e2e2e] my-4" />
+                <div className="flex items-center justify-between mt-1">
+                  <span className="text-xs text-gray-500 font-medium">
+                    Enter to generate &middot; Shift+Enter for new line
+                  </span>
+                  <button
+                    onClick={generate}
+                    disabled={loading || !prompt.trim()}
+                    className="px-5 py-2 rounded-lg text-sm font-medium bg-[#1e3a2b] text-[#4ade80] hover:bg-[#254734] transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? (
+                      <span className="flex items-center gap-2">
+                        <svg
+                          className="animate-spin h-3.5 w-3.5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                          />
+                        </svg>
+                        Generating
+                      </span>
+                    ) : (
+                      "Generate"
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -250,7 +228,7 @@ export default function Home() {
                 </div>
                 <div className="flex items-center justify-between pt-4">
                   <span
-                    className="text-sm truncate mr-4"
+                    className="text-sm truncate mr-4 bg-transparent border border-[#3ecf8e]/30 px-3 py-1.5 rounded-md"
                     style={{ color: "var(--text-secondary)" }}
                   >
                     {prompt}
@@ -258,12 +236,7 @@ export default function Home() {
                   <a
                     href={imageUrl}
                     download={`thumbnail-${Date.now()}.png`}
-                    className="text-sm font-medium transition whitespace-nowrap"
-                    style={{ color: "var(--text-secondary)" }}
-                    onMouseEnter={(e) => (e.target.style.color = "#3ecf8e")}
-                    onMouseLeave={(e) =>
-                      (e.target.style.color = "var(--text-secondary)")
-                    }
+                    className="px-4 py-2 rounded-lg text-sm font-medium bg-[#3ecf8e] text-[#121212] hover:bg-[#2eab73] transition-colors whitespace-nowrap"
                   >
                     Download
                   </a>
@@ -273,7 +246,7 @@ export default function Home() {
 
             {!imageUrl && !error && (
               <p
-                className="text-sm leading-relaxed"
+                className="flex justify-center text-sm leading-relaxed"
                 style={{ color: "var(--text-muted)" }}
               >
                 Your generated image will appear here.
